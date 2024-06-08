@@ -1,16 +1,21 @@
+// imports
 const express = require("express");
-const { Book } = require("./database/models");
+const { 
+    getBooks,
+    getBookById,
+    postBook,
+    putBook,
+    patchBook,
+    deleteBook
+ } = require("./database/actions");
 
 // setup router
 const router = express.Router();
 
-// columns
-const COLUMNS = ["title", "author", "price", "image"];
-
 // ================================== crud operations ================================== //
 // [done]
 router.get("/books", async (req, res) => {
-    const books = await Book.find().select(COLUMNS);
+    const books = await getBooks();
     return res.status(200).json({
         data: books,
     })
@@ -19,7 +24,7 @@ router.get("/books", async (req, res) => {
 // [done]
 router.get("/books/:id", async (req, res) => {
     const bookId = req.params.id;
-    const book = await Book.where({ _id: bookId }).findOne().select(COLUMNS);
+    const book = await getBookById(bookId)
     if (!book) {
         return res.status(404).send("Not Found!");
     } else {
@@ -31,8 +36,7 @@ router.get("/books/:id", async (req, res) => {
 
 // [done]
 router.post("/books", async (req, res) => {
-    const newBook = new Book(req.body);
-    await newBook.save();
+    const newBook = await postBook(req.body);
     return res.status(201).json({
         message: "New book has been added successfully",
         book: newBook,
@@ -42,19 +46,13 @@ router.post("/books", async (req, res) => {
 // [done]
 router.put("/books/:id", async (req, res) => {
     const bookId = req.params.id;
-    const book = await Book.where({ _id: bookId }).findOne();
+    const book = await getBookById(bookId);
     if (!book) {
         return res.status(404).send("Not Found!");
     } else {
-        const { title, author, image, price } = req.body;
-        book.title = title;
-        book.author = author;
-        book.image = image;
-        book.price = price;
-        book.save();
+        await putBook(bookId, req.body);
         return res.status(201).json({
-            message: "Book has been updated successfully",
-            book: book,
+            message: "Book has been updated successfully"
         });
     }
 });
@@ -62,22 +60,23 @@ router.put("/books/:id", async (req, res) => {
 // [done]
 router.patch("/books/:id", async (req, res) => {
     const bookId = req.params.id;
-    const book = await Book.where({ _id: bookId }).findOne();
+    const book = await getBookById(bookId);
     if (!book) {
         return res.status(404).send("Not Found!");
     } else {
         const fieldName = req.query.fieldName.trim().toLowerCase();
         const fieldValue = req.query.fieldValue;
 
-        if (!COLUMNS.includes(fieldName) || !fieldValue) {
+        if (!COLUMNS.includes(fieldName)) {
             return res.status(404).send("Bad request - fieldName isn't allowed!");
+        } else if (!fieldValue) {
+            return res.status(404).send("Bad request - fieldValue must be provided!");
+        } else {
+            await patchBook(bookId, fieldName, fieldValue);
         }
-
-        book[fieldName] = fieldValue;
-        book.save();
+        
         return res.status(201).json({
-            message: "Book has been modified successfully",
-            book: book,
+            message: "Book has been modified successfully"
         });
     }
 });
@@ -85,14 +84,13 @@ router.patch("/books/:id", async (req, res) => {
 // [done]
 router.delete("/books/:id", async (req, res) => {
     const bookId = req.params.id;
-    const book = await Book.where({ _id: bookId }).findOne();
+    const book = await getBookById(bookId)
     if (!book) {
         return res.status(404).send("Not Found!");
     } else {
-        await Book.deleteOne({ _id: bookId });
+        await deleteBook(bookId);
         return res.status(200).json({
-            message: "Book has been deleted successfully",
-            book: book,
+            message: "Book has been deleted successfully"
         });
     }
 });

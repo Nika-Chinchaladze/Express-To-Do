@@ -2,7 +2,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-// Challenge model & schema
+// Book schema
 const bookSchema = new Schema({
     title: {
         require: true,
@@ -22,6 +22,7 @@ const bookSchema = new Schema({
     }
 });
 
+// Book model
 const Book = mongoose.model("Book", bookSchema);
 
 // exports
