@@ -93,7 +93,7 @@ router.patch("/books/:id", async (req, res) => {
     }
 });
 
-// [done]
+// [done ... tested]
 router.delete("/books/:id", async (req, res) => {
     const bookId = req.params.id;
     const book = await act.getBookById(bookId)
@@ -102,7 +102,7 @@ router.delete("/books/:id", async (req, res) => {
     } else {
         await act.deleteBook(bookId);
         return res.status(200).json({
-            message: "Book has been deleted successfully"
+            message: "Book has been deleted successfully!"
         });
     }
 });
