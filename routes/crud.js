@@ -51,10 +51,15 @@ router.put("/books/:id", async (req, res) => {
     if (!book) {
         return res.status(404).send("Not Found!");
     } else {
-        await putBook(bookId, req.body);
-        return res.status(201).json({
-            message: "Book has been updated successfully"
-        });
+        const { title, author, image, price } = req.body;
+        if (!title || !author || !image || !price) {
+            return res.status(404).send("Bad Request - all fields must be provided!");
+        } else {
+            await act.putBook(bookId, req.body);
+            return res.status(201).json({
+                message: "Book has been updated successfully"
+            });
+        }
     }
 });
 

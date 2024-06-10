@@ -31,7 +31,12 @@ const putBook = async (bookId, data) => {
         { title: title, author: author, image: image, price: price },
         { new: true, runValidators: true },
     );
-    return;
+    
+    if (book.modifiedCount > 0) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 // PATCH - modify book
