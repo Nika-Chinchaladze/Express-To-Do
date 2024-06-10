@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "vitest --run --reporter",
-    "test:file": "vitest crud-put --run --reporter verbose"
+    "test:file": "vitest crud-patch --run --reporter verbose"
   },
   "author": "nika chinchaladze",
   "license": "ISC",

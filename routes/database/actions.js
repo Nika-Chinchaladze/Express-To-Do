@@ -44,13 +44,13 @@ const patchBook = async (bookId, fieldName, fieldValue) => {
     const book = await Book.where({ _id: bookId }).findOne(); 
     book[fieldName] = fieldValue;
     book.save();
-    return;
+    return true;
 }
 
 // DELETE - remove book by id
 const deleteBook = async (bookId) => {
     await Book.deleteOne({ _id: bookId });
-    return;
+    return true;
 }
 
 // exports

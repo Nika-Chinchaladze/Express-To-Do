@@ -44,7 +44,7 @@ router.post("/books", async (req, res) => {
     })
 });
 
-// [done]
+// [done ... tested]
 router.put("/books/:id", async (req, res) => {
     const bookId = req.params.id;
     const book = await act.getBookById(bookId);
@@ -63,26 +63,32 @@ router.put("/books/:id", async (req, res) => {
     }
 });
 
-// [done]
+// [done ... tested]
 router.patch("/books/:id", async (req, res) => {
     const bookId = req.params.id;
     const book = await act.getBookById(bookId);
     if (!book) {
         return res.status(404).send("Not Found!");
     } else {
-        const fieldName = req.query.fieldName.trim().toLowerCase();
+        const fieldName = req.query.fieldName;
         const fieldValue = req.query.fieldValue;
-
-        if (!act.COLUMNS.includes(fieldName)) {
-            return res.status(404).send("Bad request - fieldName isn't allowed!");
-        } else if (!fieldValue) {
-            return res.status(404).send("Bad request - fieldValue must be provided!");
+        if (!fieldName) {
+            return res.status(404).send("Field - fieldName is't provided!");
+        }
+        else if (!act.COLUMNS.includes(fieldName.trim().toLowerCase())) {
+            return res.status(404).send("Provided - fieldName is't allowed!");
+        }
+        else if (!fieldValue) {
+            return res.status(404).send("Field - fieldValue is't provided!");
+        }
+        else if (fieldValue.trim().length === 0) {
+            return res.status(404).send("Provided - fieldValue mustn't be empty!");
         } else {
             await act.patchBook(bookId, fieldName, fieldValue);
         }
         
         return res.status(201).json({
-            message: "Book has been modified successfully"
+            message: "Book has been modified successfully!"
         });
     }
 });
